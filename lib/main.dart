@@ -5,7 +5,7 @@ import 'package:motivational_quotes/screen/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences sharedPreferences;
-  FirebaseFirestore firebaseFirestore;
+FirebaseFirestore firebaseFirestore;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Good Quotes',
       home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );

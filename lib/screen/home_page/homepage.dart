@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:motivational_quotes/constants/shared_preferences_key.dart';
+import 'package:motivational_quotes/main.dart';
+import 'package:motivational_quotes/screen/add_post/add_post_screen.dart';
+import 'package:motivational_quotes/screen/comment_page/comment_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage_bloc.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 
@@ -17,6 +21,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _bloc.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -29,23 +39,60 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Color(0xFF907fA4),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black12, width: 0.5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: Icon(
+                LineIcons.home,
+                size: 30,
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(
+                LineIcons.plusCircle,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPostScreen(),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                LineIcons.bookmark,
+                size: 30,
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
       body: StreamBuilder<List<PostData>>(
         stream: _bloc.postListStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<PostData> list = snapshot.data;
+            List<PostData> list = snapshot.data.reversed.toList();
             return ListView.builder(
               itemBuilder: (_, index) {
-                String quote = list[index].quote.replaceAll("\\n", "\n");
                 return Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      textPost(quote),
-                      iconButtons(),
+                      textPost(list[index]),
+                      iconButtons(list[index]),
                       socialDataMetrics(list[index]),
                     ],
                   ),
@@ -61,17 +108,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget textPost(String quote) {
+  Widget textPost(PostData postData) {
     return Card(
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.width,
-        color: Colors.red.shade50,
+        color: Color(int.parse(postData.backgroundColor)),
         child: Center(
           child: Text(
-            quote,
+            postData.quote,
             style: TextStyle(
-              fontSize: 15,
+              fontSize: postData.fontSize.toDouble(),
               height: 1.6,
               fontFamily: "PlayfairVariable",
               color: Colors.black,
@@ -82,22 +129,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget iconButtons() {
+  Widget iconButtons(PostData data) {
+    String userToken = sharedPreferences.getString(SharedPreferencesKey.token);
+    bool isLiked = data.likes != null && data.likes.contains(userToken);
     return Row(
       children: [
         IconButton(
           icon: Icon(
-            LineIcons.heart,
+            isLiked ? LineIcons.heartAlt : LineIcons.heart,
             size: 30,
+            color: isLiked ? Colors.red : Colors.black,
           ),
-          onPressed: () {},
+          onPressed: () {
+            _bloc.likePost(data.timestamp, userToken, isLiked);
+          },
         ),
         IconButton(
           icon: Icon(
             LineIcons.alternateComment,
             size: 30,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CommentScreen(timestamp: data.timestamp),
+              ),
+            );
+          },
         ),
         Expanded(
           child: Container(),
@@ -120,11 +179,11 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Visibility(
-            visible: data.likesCount != null && data.likesCount != 0,
+            visible: data.likes.length > 0,
             child: Text(
-              data.likesCount == 1
-                  ? "${data.likesCount} like"
-                  : "${data.likesCount} likes",
+              data.likes.length == 1
+                  ? "${data.likes.length} like"
+                  : "${data.likes.length} likes",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
           ),
@@ -132,14 +191,25 @@ class _HomePageState extends State<HomePage> {
             visible: data.commentCount != null && data.commentCount != 0,
             child: Padding(
               padding: const EdgeInsets.only(top: 5.0),
-              child: Text(
-                data.commentCount == 1
-                    ? "view ${data.commentCount} comment"
-                    : "view all ${data.commentCount} comments",
-                style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black38),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CommentScreen(timestamp: data.timestamp),
+                    ),
+                  );
+                },
+                child: Text(
+                  data.commentCount == 1
+                      ? "view ${data.commentCount} comment"
+                      : "view all ${data.commentCount} comments",
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black38),
+                ),
               ),
             ),
           ),

@@ -6,14 +6,29 @@ class PostData {
   int likesCount;
   int commentCount;
   String imageLink;
-
-  PostData(String data, int fileType, int likesCount, int commentCount,
-      String imageLink) {
+  int timestamp;
+  List likes;
+  String backgroundColor;
+  int fontSize;
+  PostData(
+      String data,
+      int fileType,
+      int likesCount,
+      int commentCount,
+      String imageLink,
+      int timestamp,
+      List likes,
+      String backgroundColor,
+      int fontSize) {
     this.quote = data;
     this.fileType = fileType;
     this.likesCount = likesCount;
     this.commentCount = commentCount;
     this.imageLink = imageLink;
+    this.timestamp = timestamp;
+    this.likes = likes;
+    this.backgroundColor = backgroundColor;
+    this.fontSize = fontSize;
   }
 
   PostData.zero();
@@ -25,6 +40,10 @@ class PostData {
       map["likes_count"],
       map["comments_count"],
       map["image_link"],
+      map["timestamp"],
+      map["likes"],
+      map["background_color"],
+      map["font_size"],
     );
   }
 
