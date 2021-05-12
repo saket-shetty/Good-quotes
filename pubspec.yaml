@@ -83,6 +83,9 @@ flutter:
     - family: PlayfairVariable
       fonts:
         - asset: fonts/PlayfairDisplay-VariableFont_wght.ttf
+    - family: Opensans
+      fonts:
+        - asset: fonts/OpenSans-Bold.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

@@ -76,22 +76,28 @@ class _CommentScreenState extends State<CommentScreen> {
         color: Color(0xFFf4eee8),
         border: Border.all(color: Colors.black12, width: 0.5),
       ),
-      child: TextFormField(
-        controller: _commentFieldController,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          hintText: "Add a comment...",
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: profileImageWidget(),
-          ),
-          suffixIcon: IconButton(
-            icon: Icon(Icons.send),
-            onPressed: () async {
-              await _bloc.postCommentInFireStore(
-                  _commentFieldController.text, widget.timestamp);
-              _commentFieldController.clear();
-            },
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: 100.0,
+        ),
+        child: TextFormField(
+          controller: _commentFieldController,
+          textAlignVertical: TextAlignVertical.center,
+          maxLines: null,
+          decoration: InputDecoration(
+            hintText: "Add a comment...",
+            prefixIcon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: profileImageWidget(),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () async {
+                await _bloc.postCommentInFireStore(
+                    _commentFieldController.text, widget.timestamp);
+                _commentFieldController.clear();
+              },
+            ),
           ),
         ),
       ),

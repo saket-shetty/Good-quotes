@@ -1,12 +1,16 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:motivational_quotes/screen/home_page/homepage.dart';
+import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
 import 'package:motivational_quotes/screen/splash_screen.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences sharedPreferences;
 FirebaseFirestore firebaseFirestore;
-
+StreamController<List<ProfileObject>> userSearchDetailController = BehaviorSubject<List<ProfileObject>>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -22,6 +26,9 @@ class MyApp extends StatelessWidget {
       title: 'Good Quotes',
       home: SplashScreen(),
       debugShowCheckedModeBanner: false,
+      routes: {
+        "home_page": (context)=>HomePage(),
+      },
     );
   }
 }

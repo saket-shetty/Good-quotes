@@ -1,16 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
+import 'package:motivational_quotes/constants/shared_preferences_key.dart';
+import 'package:motivational_quotes/main.dart';
+import 'package:motivational_quotes/screen/add_post/add_post_repository.dart';
+import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 class ConfigurePostScreen extends StatefulWidget {
   final String postData;
-  const ConfigurePostScreen({Key key, @required this.postData}) : super(key: key);
+  const ConfigurePostScreen({Key key, @required this.postData})
+      : super(key: key);
   @override
   _ConfigurePostScreenState createState() => _ConfigurePostScreenState();
 }
 
 class _ConfigurePostScreenState extends State<ConfigurePostScreen> {
   List data = [
+    0xFFFFFFFF,
     0xFFfaf2da,
     0xFF9fe6a0,
     0xFFffb26b,
@@ -22,15 +29,44 @@ class _ConfigurePostScreenState extends State<ConfigurePostScreen> {
 
   List<int> fontSize = [15, 17, 19, 21, 23, 25];
 
-  int selectedColor = 0xFFfaf2da;
+  int selectedColor = 0xFFFFFFFF;
   int selectedFontSize = 15;
+
+  AddPostRepository _repository = AddPostRepository();
+
+  Color c = Colors.white;
+
+  String name = sharedPreferences.getString(SharedPreferencesKey.name);
+  String id = sharedPreferences.getString(SharedPreferencesKey.token);
+  String image = sharedPreferences.getString(SharedPreferencesKey.image);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: commonAppBar("Configure Post Style"),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          await _repository.postDataToFireStore(
+            PostData(
+              widget.postData,
+              1,
+              0,
+              0,
+              "",
+              Timestamp.now().millisecondsSinceEpoch,
+              [],
+              selectedColor.toString(),
+              selectedFontSize,
+              name,
+              id,
+              image,
+              "member",
+              [],
+            ),
+          );
+          Navigator.pop(context);
+          Navigator.popAndPushNamed(context, "home_page");
+        },
         backgroundColor: Colors.deepPurpleAccent,
         child: Icon(Icons.send),
       ),
