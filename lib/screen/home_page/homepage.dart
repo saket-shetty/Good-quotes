@@ -1,4 +1,5 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
@@ -185,89 +186,61 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget searchUserBox() {
-    return Stack(
-      children: [
-        Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width - 50,
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(color: Colors.black12, width: 0.5),
-              color: Colors.white,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  child: Icon(EvaIcons.search),
-                  padding: EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25.0),
-                    color: Color(0xFFfaf3f3),
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: _userNameSearchController,
-                    onChanged: (user) {
-                      _bloc.searchUserFromFirestore(user);
-                    },
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 10),
-                      hintText: "Search friend",
-                      hintStyle: TextStyle(color: Colors.black45),
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      suffixIcon: IconButton(
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 50,
+        padding: EdgeInsets.all(10.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: Colors.black12, width: 0.5),
+          color: Colors.white,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _userNameSearchController,
+                textAlignVertical: TextAlignVertical.center,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 10),
+                  hintText: "Search friend",
+                  hintStyle: TextStyle(color: Colors.black45),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  suffixIcon: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        child: Container(
+                          child: Icon(EvaIcons.search),
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Color(0xFFfaf3f3),
+                          ),
+                        ),
+                        onTapUp: (tapUpDetail) {
+                          _showHoverWidget(tapUpDetail);
+                        },
+                      ),
+                      IconButton(
                         icon: Icon(Icons.clear),
                         onPressed: () {
                           _userNameSearchController.clear();
                           userSearchDetailController.sink.add([]);
                         },
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 80.0, left: 20),
-          child: StreamBuilder<List<ProfileObject>>(
-              stream: userSearchDetailController.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<ProfileObject> list = snapshot.data;
-                  return ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: 200,
-                    ),
-                    child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (_, index) {
-                        ProfileObject user = list[index];
-                        return ListTile(
-                          leading: profileImageWidget(
-                            profileImageUrl: user.imageUrl,
-                          ),
-                          title: Text(user.name),
-                          subtitle: Text("member"),
-                        );
-                      },
-                      itemCount: list.length,
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              }),
-        ),
-      ],
+      ),
     );
   }
 
@@ -301,6 +274,67 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  _showHoverWidget(TapUpDetails touchDetail) {
+    _bloc.searchUserFromFirestore(_userNameSearchController.text);
+    RelativeRect _buttonMenuPosition(BuildContext context, Offset _touchPos) {
+      final RelativeRect position = RelativeRect.fromRect(
+        Rect.fromPoints(
+          _touchPos,
+          _touchPos,
+        ),
+        Offset.zero & context.size,
+      );
+      return position;
+    }
+
+    showMenu<int>(
+      context: context,
+      position: _buttonMenuPosition(context, touchDetail.globalPosition),
+      elevation: 1.0,
+      useRootNavigator: false,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          width: 0.5,
+          color: Colors.black12,
+        ),
+        borderRadius: BorderRadius.all(
+          Radius.circular(20.0),
+        ),
+      ),
+      items: [
+        PopupMenuItem(
+          enabled: false,
+          child: Container(
+            width: MediaQuery.of(context).size.width - 100,
+            child: StreamBuilder<List<ProfileObject>>(
+                stream: userSearchDetailController.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data.length > 0) {
+                    List<ProfileObject> list = snapshot.data;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (_, index) {
+                        ProfileObject user = list[index];
+                        return ListTile(
+                          leading: profileImageWidget(
+                            profileImageUrl: user.imageUrl,
+                          ),
+                          title: Text(user.name),
+                          subtitle: Text("member"),
+                        );
+                      },
+                      itemCount: list.length,
+                    );
+                  } else {
+                    return Text("no users found");
+                  }
+                }),
+          ),
+        )
       ],
     );
   }
