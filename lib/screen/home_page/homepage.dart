@@ -2,14 +2,15 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/constants/shared_preferences_key.dart';
 import 'package:motivational_quotes/main.dart';
-import 'package:motivational_quotes/screen/add_post/add_post_screen.dart';
 import 'package:motivational_quotes/screen/comment_page/comment_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage_bloc.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
+import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +21,8 @@ class _HomePageState extends State<HomePage> {
   HomepageBloc _bloc;
   ScrollController _scrollController = ScrollController();
   TextEditingController _userNameSearchController = TextEditingController();
+  String userName = sharedPreferences.getString(SharedPreferencesKey.name);
+  String userToken = sharedPreferences.getString(SharedPreferencesKey.token);
   @override
   void initState() {
     super.initState();
@@ -42,7 +45,8 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Color(0xFFfaf3f3),
         resizeToAvoidBottomInset: false,
         appBar: appBarWidget(),
-        bottomNavigationBar: bottomNavigationBar(),
+        bottomNavigationBar: bottomNavigationBar(context, 1,
+            scrollController: _scrollController),
         body: ListView(
           controller: _scrollController,
           children: [
@@ -62,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            textPost(list[index]),
+                            textPost(list[index], context),
                             iconButtons(list[index]),
                             socialDataMetrics(list[index]),
                           ],
@@ -97,62 +101,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget bottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black12, width: 0.5),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(
-            icon: Icon(
-              LineIcons.home,
-              size: 30,
-            ),
-            onPressed: () {
-              _scrollController.animateTo(
-                0.0,
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              LineIcons.facebookMessenger,
-              size: 30,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(
-              LineIcons.plusCircle,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPostScreen(),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              LineIcons.bookmark,
-              size: 30,
-            ),
-            onPressed: () {},
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget userGreetingCard() {
-    String userName = sharedPreferences.getString(SharedPreferencesKey.name);
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
@@ -172,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                 userName.split(" ").first + "!",
                 style: TextStyle(
                   fontSize: 25.0,
-                  color: Colors.black87,
+                  color: Color(0xFF356B8F),
                   fontWeight: FontWeight.w700,
                   fontFamily: "Opensans",
                 ),
@@ -244,40 +193,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget textPost(PostData postData) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        ListTile(
-          leading: profileImageWidget(profileImageUrl: postData.imageLink),
-          title: Text(
-            postData.postersName,
-            style: TextStyle(fontWeight: FontWeight.w500),
-          ),
-          subtitle: Text(postData.postersRole),
-        ),
-        Card(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width,
-            color: Color(int.parse(postData.backgroundColor)),
-            child: Center(
-              child: Text(
-                postData.quote,
-                style: TextStyle(
-                  fontSize: postData.fontSize.toDouble(),
-                  height: 1.6,
-                  fontFamily: "PlayfairVariable",
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   _showHoverWidget(TapUpDetails touchDetail) {
     _bloc.searchUserFromFirestore(_userNameSearchController.text);
     RelativeRect _buttonMenuPosition(BuildContext context, Offset _touchPos) {
@@ -325,6 +240,26 @@ class _HomePageState extends State<HomePage> {
                           ),
                           title: Text(user.name),
                           subtitle: Text("member"),
+                          onTap: () {
+                            Navigator.pop(context);
+                            if (user.token == userToken) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(
+                                    userToken: user.token,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         );
                       },
                       itemCount: list.length,
@@ -340,7 +275,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget iconButtons(PostData data) {
-    String userToken = sharedPreferences.getString(SharedPreferencesKey.token);
     bool isLiked = data.likes != null && data.likes.contains(userToken);
     bool isSaved = data.postSavedByUsers != null &&
         data.postSavedByUsers.contains(userToken);

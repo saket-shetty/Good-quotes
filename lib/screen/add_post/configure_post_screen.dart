@@ -37,7 +37,7 @@ class _ConfigurePostScreenState extends State<ConfigurePostScreen> {
   Color c = Colors.white;
 
   String name = sharedPreferences.getString(SharedPreferencesKey.name);
-  String id = sharedPreferences.getString(SharedPreferencesKey.token);
+  String token = sharedPreferences.getString(SharedPreferencesKey.token);
   String image = sharedPreferences.getString(SharedPreferencesKey.image);
 
   @override
@@ -58,7 +58,7 @@ class _ConfigurePostScreenState extends State<ConfigurePostScreen> {
               selectedColor.toString(),
               selectedFontSize,
               name,
-              id,
+              token,
               image,
               "member",
               [],

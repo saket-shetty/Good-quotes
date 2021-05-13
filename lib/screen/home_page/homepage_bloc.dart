@@ -44,11 +44,7 @@ class HomepageBloc {
   }
 
   searchUserFromFirestore(String userName) {
-    firebaseFirestore
-        .collection("user")
-        .where("user_name", isGreaterThanOrEqualTo: userName)
-        .get()
-        .then((value) {
+    firebaseFirestore.collection("user").get().then((value) {
       userSearchDetailController.sink
           .add(profileObject.fromArrayObject(value.docs, name: userName));
     });
