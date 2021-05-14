@@ -6,6 +6,8 @@ class ProfileObject {
   String imageUrl;
   int postCounts;
   String status;
+  List<ProfileObject> follower;
+  List<ProfileObject> following;
 
   ProfileObject.zero();
 
@@ -15,6 +17,8 @@ class ProfileObject {
     this.imageUrl,
     this.postCounts,
     this.status,
+    this.follower,
+    this.following,
   );
 
   Map<String, dynamic> toMapLimitedData() {
@@ -42,12 +46,25 @@ class ProfileObject {
       map["image_url"],
       map["posts_count"],
       map["status"],
+      fromMapLimitedDataObject(map["follower"]),
+      fromMapLimitedDataObject(map["following"]),
     );
+  }
+
+  List<ProfileObject> fromMapLimitedDataObject(List<dynamic> list) {
+    List<ProfileObject> profileList = [];
+    if (list != null) {
+      for (var map in list) {
+        profileList.add(fromMapObject(map));
+      }
+    }
+    return profileList;
   }
 
   List<ProfileObject> fromArrayObject(
       List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
       {String name}) {
+    print(data);
     List<ProfileObject> list = [];
     for (var object in data) {
       if (name != null) {

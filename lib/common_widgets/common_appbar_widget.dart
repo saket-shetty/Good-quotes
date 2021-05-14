@@ -20,7 +20,7 @@ PreferredSizeWidget commonAppBar(String title) {
   );
 }
 
-Widget bottomNavigationBar(BuildContext context, int tab,
+Widget bottomNavigationBar(BuildContext context, int tab, String token,
     {ScrollController scrollController}) {
   return Container(
     decoration: BoxDecoration(
@@ -74,7 +74,7 @@ Widget bottomNavigationBar(BuildContext context, int tab,
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfileScreen(),
+                builder: (context) => ProfileScreen(userToken: token,),
               ),
             );
           },

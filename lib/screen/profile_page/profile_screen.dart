@@ -10,13 +10,16 @@ import 'package:motivational_quotes/social_login/google_signin.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String userToken;
-  const ProfileScreen({Key key, this.userToken}) : super(key: key);
+  const ProfileScreen({Key key, @required this.userToken}) : super(key: key);
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String token = sharedPreferences.getString(SharedPreferencesKey.token);
+  String name = sharedPreferences.getString(SharedPreferencesKey.name);
+  String image = sharedPreferences.getString(SharedPreferencesKey.image);
+  bool get selfProfile => widget.userToken == token;
   ProfileBloc _bloc;
 
   @override
@@ -26,16 +29,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _bloc.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFfaf3f3),
-      bottomNavigationBar: bottomNavigationBar(context, 4),
+      bottomNavigationBar: bottomNavigationBar(context, 4, token),
       body: SafeArea(
         child: Container(
           child: Column(
@@ -91,7 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              "My Profile",
+                              selfProfile
+                                  ? "My Profile"
+                                  : _profileObject.name.split(" ").first +
+                                      "'s Profile",
                               style: TextStyle(
                                 fontSize: 25,
                                 color: Color(0xFF356B8F),
@@ -120,18 +120,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            _profileObject.status ?? "Add Status",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF5E8FAD),
-                              fontWeight: FontWeight.w400,
+                        Visibility(
+                          visible:
+                              !(!selfProfile && _profileObject.status == null),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              _profileObject.status ?? "Add Status",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Color(0xFF5E8FAD),
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),
+                        userConnectionButton(_profileObject),
                         Padding(
                           padding: const EdgeInsets.only(top: 20.0),
                           child: Row(
@@ -139,8 +144,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               activityMetrics(
                                   "Posts", _profileObject.postCounts ?? 0),
-                              activityMetrics("Followers", 0),
-                              activityMetrics("Follows", 0),
+                              activityMetrics(
+                                  "Followers", _profileObject.follower.length),
+                              activityMetrics(
+                                  "Follows", _profileObject.following.length),
                             ],
                           ),
                         ),
@@ -151,6 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
                 },
               ),
+              /////////////
               StreamBuilder<List<PostData>>(
                 stream: _bloc.postCreatedStream,
                 builder: (context, snapshot) {
@@ -271,6 +279,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         )
       ],
+    );
+  }
+
+  Widget userConnectionButton(ProfileObject _profileObject) {
+    ProfileObject _self = ProfileObject(name, token, image, null, null, [], []);
+    bool isUserFollowing = false;
+    if (_profileObject.follower != null) {
+      for (ProfileObject obj in _profileObject.follower) {
+        if (obj.token == _self.token) {
+          isUserFollowing = true;
+          break;
+        }
+      }
+    }
+    return Visibility(
+      visible: !selfProfile,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.all(5),
+              width: (MediaQuery.of(context).size.width / 3) - 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                border: Border.all(
+                  color: Colors.black,
+                ),
+              ),
+              child: Text(
+                isUserFollowing ? "Following" : "Follow",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            onTap: () async {
+              await _bloc.followOrUnFollowUser(token, widget.userToken, _self,
+                  _profileObject, isUserFollowing);
+            },
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            width: (MediaQuery.of(context).size.width / 3) - 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              border: Border.all(
+                color: Colors.black,
+              ),
+            ),
+            child: Text(
+              "Message",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            width: (MediaQuery.of(context).size.width / 3) - 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              border: Border.all(
+                color: Colors.black,
+              ),
+            ),
+            child: Text(
+              "Report",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

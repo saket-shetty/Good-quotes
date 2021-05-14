@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motivational_quotes/main.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
@@ -24,8 +25,8 @@ class ProfileBloc {
       _profileObjectController.sink;
 
   ProfileBloc(String token) {
-    getUserPostData(token);
     getProfileDetailFromFirestore(token);
+    getUserPostData(token);
   }
 
   getUserPostData(String token) {
@@ -34,14 +35,13 @@ class ProfileBloc {
         .where("posters_id", isEqualTo: token)
         .get()
         .then((value) {
-      List<PostData> list =
-          postData.forArrayToObject(value.docs).reversed.toList();
-      postCreatedSink.add(list);
+      postCreatedSink
+          .add(postData.forArrayToObject(value.docs).reversed.toList());
     });
   }
 
   getProfileDetailFromFirestore(String token) {
-    firebaseFirestore.collection("user").doc(token).get().then((value) {
+    firebaseFirestore.collection("user").doc(token).snapshots().listen((value) {
       profileDataSink.add(profileObject.fromMapObject(value.data()));
     });
   }
@@ -54,6 +54,20 @@ class ProfileBloc {
         .then((value) {
       List<PostData> list = postData.forArrayToObject(value.docs);
       print(list);
+    });
+  }
+
+  Future<void> followOrUnFollowUser(String selfToken, String friendToken,
+      ProfileObject self, ProfileObject friend, bool isUserFollowing) async {
+    await firebaseFirestore.collection("user").doc(selfToken).update({
+      "following": isUserFollowing
+          ? FieldValue.arrayRemove([friend.toMapLimitedData()])
+          : FieldValue.arrayUnion([friend.toMapLimitedData()]),
+    });
+    await firebaseFirestore.collection("user").doc(friendToken).update({
+      "follower": isUserFollowing
+          ? FieldValue.arrayRemove([self.toMapLimitedData()])
+          : FieldValue.arrayUnion([self.toMapLimitedData()]),
     });
   }
 

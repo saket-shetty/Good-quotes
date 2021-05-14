@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:motivational_quotes/login/login_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
-import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
 import 'package:motivational_quotes/screen/splash_screen.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
       routes: {
         "login": (context) => LoginScreen(),
         "home_page": (context) => HomePage(),
-        "profile_page": (context) => ProfileScreen(),
       },
     );
   }

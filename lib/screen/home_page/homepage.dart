@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Color(0xFFfaf3f3),
         resizeToAvoidBottomInset: false,
         appBar: appBarWidget(),
-        bottomNavigationBar: bottomNavigationBar(context, 1,
+        bottomNavigationBar: bottomNavigationBar(context, 1, userToken,
             scrollController: _scrollController),
         body: ListView(
           controller: _scrollController,
@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(),
+                                  builder: (context) => ProfileScreen(userToken: userToken,),
                                 ),
                               );
                             } else {
