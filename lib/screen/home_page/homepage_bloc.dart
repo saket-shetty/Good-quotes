@@ -15,6 +15,16 @@ class HomepageBloc {
   Stream<List<PostData>> get postListStream => postListController.stream;
   StreamSink<List<PostData>> get postListSink => postListController.sink;
 
+  StreamController<List<PostData>> postListSavedController =
+      BehaviorSubject<List<PostData>>();
+
+  Stream<List<PostData>> get postListSavedStream => postListController.stream;
+  StreamSink<List<PostData>> get postListSavedSink => postListController.sink;
+
+  HomepageBloc.savedPost(String token) {
+    getSavedPostData(token);
+  }
+
   HomepageBloc() {
     getDataFromFireStore();
   }
@@ -50,7 +60,18 @@ class HomepageBloc {
     });
   }
 
+  getSavedPostData(String token) {
+    firebaseFirestore
+        .collection("post")
+        .where("post_saved", arrayContains: token)
+        .get()
+        .then((value) {
+      postListSavedSink.add(postData.forArrayToObject(value.docs));
+    });
+  }
+
   dispose() {
     postListController.close();
+    postListSavedController.close();
   }
 }

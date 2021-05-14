@@ -46,17 +46,6 @@ class ProfileBloc {
     });
   }
 
-  getSavedPostData(String token) {
-    firebaseFirestore
-        .collection("post")
-        .where("post_saved", arrayContains: token)
-        .get()
-        .then((value) {
-      List<PostData> list = postData.forArrayToObject(value.docs);
-      print(list);
-    });
-  }
-
   Future<void> followOrUnFollowUser(String selfToken, String friendToken,
       ProfileObject self, ProfileObject friend, bool isUserFollowing) async {
     await firebaseFirestore.collection("user").doc(selfToken).update({

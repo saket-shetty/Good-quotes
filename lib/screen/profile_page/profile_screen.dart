@@ -3,9 +3,12 @@ import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/constants/shared_preferences_key.dart';
 import 'package:motivational_quotes/main.dart';
+import 'package:motivational_quotes/screen/diary_page/diary_screen.dart';
+import 'package:motivational_quotes/screen/follower_following_page/follower_following_screen.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_bloc.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
+import 'package:motivational_quotes/screen/saved_post/saved_post_screen.dart';
 import 'package:motivational_quotes/social_login/google_signin.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -64,19 +67,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, right: 15.0),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: GestureDetector(
-                                  child: Icon(
-                                    Icons.menu,
-                                    color: Color(0xFF356B8F),
+                            Visibility(
+                              visible: selfProfile,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 8.0, right: 15.0),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: GestureDetector(
+                                    child: Icon(
+                                      Icons.menu,
+                                      color: Color(0xFF356B8F),
+                                    ),
+                                    onTapUp: (tapUpDetails) {
+                                      _showDialogOptions(tapUpDetails);
+                                    },
                                   ),
-                                  onTapUp: (tapUpDetails) {
-                                    _showDialogOptions(tapUpDetails);
-                                  },
                                 ),
                               ),
                             ),
@@ -144,10 +150,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               activityMetrics(
                                   "Posts", _profileObject.postCounts ?? 0),
-                              activityMetrics(
-                                  "Followers", _profileObject.follower.length),
-                              activityMetrics(
-                                  "Follows", _profileObject.following.length),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FollowerFollowingScreen(
+                                        tab: 1,
+                                        token: _profileObject.token,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: activityMetrics("Followers",
+                                    _profileObject.follower.length),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FollowerFollowingScreen(
+                                        tab: 2,
+                                        token: _profileObject.token,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: activityMetrics(
+                                    "Follows", _profileObject.following.length),
+                              ),
                             ],
                           ),
                         ),
@@ -247,11 +281,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                  child: Text("Logout"),
+                  child: Text("Diary"),
                   onTap: () async {
-                    print("Logout clicked");
+                    print("Diary clicked");
                     Navigator.pop(context);
-                    SignInGoogle().handleGoogleSignOut(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DiaryScreen(
+                          token: token,
+                        ),
+                      ),
+                    );
                   },
                 ),
                 Divider(
@@ -260,8 +301,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 GestureDetector(
                   child: Text("Saved Post"),
                   onTap: () {
-                    print("Logout clicked");
+                    print("Saved Post clicked");
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SavedPostScreen(),
+                      ),
+                    );
                   },
                 ),
                 Divider(
@@ -270,8 +317,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 GestureDetector(
                   child: Text("Edit Profile"),
                   onTap: () {
+                    print("Edit Profile clicked");
+                    Navigator.pop(context);
+                  },
+                ),
+                Divider(
+                  thickness: 1,
+                ),
+                GestureDetector(
+                  child: Text("Logout"),
+                  onTap: () async {
                     print("Logout clicked");
                     Navigator.pop(context);
+                    SignInGoogle().handleLogout(context);
                   },
                 ),
               ],

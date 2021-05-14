@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/screen/add_post/add_post_screen.dart';
+import 'package:motivational_quotes/screen/comment_page/comment_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
@@ -74,7 +75,9 @@ Widget bottomNavigationBar(BuildContext context, int tab, String token,
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfileScreen(userToken: token,),
+                builder: (context) => ProfileScreen(
+                  userToken: token,
+                ),
               ),
             );
           },
@@ -137,5 +140,51 @@ Widget textPost(PostData postData, BuildContext context,
         ),
       ),
     ],
+  );
+}
+
+Widget socialDataMetrics(PostData data, BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.only(left: 10.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Visibility(
+          visible: data.likes.length > 0,
+          child: Text(
+            data.likes.length == 1
+                ? "${data.likes.length} like"
+                : "${data.likes.length} likes",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          ),
+        ),
+        Visibility(
+          visible: data.commentCount != null && data.commentCount != 0,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 5.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CommentScreen(timestamp: data.timestamp),
+                  ),
+                );
+              },
+              child: Text(
+                data.commentCount == 1
+                    ? "view ${data.commentCount} comment"
+                    : "view all ${data.commentCount} comments",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black38),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }

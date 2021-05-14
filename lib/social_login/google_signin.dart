@@ -52,9 +52,14 @@ class SignInGoogle {
     }
   }
 
-  Future<void> handleGoogleSignOut(BuildContext context) async {
+  Future<void> handleGoogleSignOut() async {
     await _googleSignIn.signOut();
-    Navigator.push(
+  }
+
+  Future<void> handleLogout(BuildContext context) async {
+    await handleGoogleSignOut();
+    await sharedPreferences.clear();
+        Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 }

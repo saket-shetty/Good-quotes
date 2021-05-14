@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             textPost(list[index], context),
                             iconButtons(list[index]),
-                            socialDataMetrics(list[index]),
+                            socialDataMetrics(list[index], context),
                           ],
                         ),
                       );
@@ -226,48 +226,40 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             width: MediaQuery.of(context).size.width - 100,
             child: StreamBuilder<List<ProfileObject>>(
-                stream: userSearchDetailController.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data.length > 0) {
-                    List<ProfileObject> list = snapshot.data;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (_, index) {
-                        ProfileObject user = list[index];
-                        return ListTile(
-                          leading: profileImageWidget(
-                            profileImageUrl: user.imageUrl,
-                          ),
-                          title: Text(user.name),
-                          subtitle: Text("member"),
-                          onTap: () {
-                            Navigator.pop(context);
-                            if (user.token == userToken) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(userToken: userToken,),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(
-                                    userToken: user.token,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      },
-                      itemCount: list.length,
-                    );
-                  } else {
-                    return Text("no users found");
-                  }
-                }),
+              stream: userSearchDetailController.stream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.length > 0) {
+                  List<ProfileObject> list = snapshot.data;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemBuilder: (_, index) {
+                      ProfileObject user = list[index];
+                      return ListTile(
+                        leading: profileImageWidget(
+                          profileImageUrl: user.imageUrl,
+                        ),
+                        title: Text(user.name),
+                        subtitle: Text("member"),
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                userToken: user.token,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    itemCount: list.length,
+                  );
+                } else {
+                  return Text("no users found");
+                }
+              },
+            ),
           ),
         )
       ],
@@ -317,52 +309,6 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
-    );
-  }
-
-  Widget socialDataMetrics(PostData data) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Visibility(
-            visible: data.likes.length > 0,
-            child: Text(
-              data.likes.length == 1
-                  ? "${data.likes.length} like"
-                  : "${data.likes.length} likes",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Visibility(
-            visible: data.commentCount != null && data.commentCount != 0,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 5.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          CommentScreen(timestamp: data.timestamp),
-                    ),
-                  );
-                },
-                child: Text(
-                  data.commentCount == 1
-                      ? "view ${data.commentCount} comment"
-                      : "view all ${data.commentCount} comments",
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black38),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
