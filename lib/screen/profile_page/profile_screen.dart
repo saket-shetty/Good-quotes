@@ -6,6 +6,7 @@ import 'package:motivational_quotes/main.dart';
 import 'package:motivational_quotes/screen/diary_page/diary_screen.dart';
 import 'package:motivational_quotes/screen/follower_following_page/follower_following_screen.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
+import 'package:motivational_quotes/screen/message_page/message_screen.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_bloc.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
 import 'package:motivational_quotes/screen/saved_post/saved_post_screen.dart';
@@ -192,7 +193,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
                 },
               ),
-              /////////////
               StreamBuilder<List<PostData>>(
                 stream: _bloc.postCreatedStream,
                 builder: (context, snapshot) {
@@ -380,23 +380,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _profileObject, isUserFollowing);
             },
           ),
-          Container(
-            padding: EdgeInsets.all(5),
-            width: (MediaQuery.of(context).size.width / 3) - 20,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              border: Border.all(
-                color: Colors.black,
+          GestureDetector(
+            child: Container(
+              padding: EdgeInsets.all(5),
+              width: (MediaQuery.of(context).size.width / 3) - 20,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                border: Border.all(
+                  color: Colors.black,
+                ),
+              ),
+              child: Text(
+                "Message",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-            child: Text(
-              "Message",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MessageScreen(
+                    selfToken: token,
+                    friendProfile: _profileObject,
+                  ),
+                ),
+              );
+            },
           ),
           Container(
             padding: EdgeInsets.all(5),
