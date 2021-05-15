@@ -3,8 +3,10 @@ import 'package:line_icons/line_icons.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/screen/add_post/add_post_screen.dart';
 import 'package:motivational_quotes/screen/comment_page/comment_screen.dart';
+import 'package:motivational_quotes/screen/global_chat_page/global_chat_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
+import 'package:motivational_quotes/screen/message_page/message_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
 
 PreferredSizeWidget commonAppBar(String title) {
@@ -53,7 +55,16 @@ Widget bottomNavigationBar(BuildContext context, int tab, String token,
             LineIcons.facebookMessenger,
             size: 30,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GlobalChatScreen(
+                  token: token,
+                ),
+              ),
+            );
+          },
         ),
         IconButton(
           icon: Icon(
@@ -187,4 +198,95 @@ Widget socialDataMetrics(PostData data, BuildContext context) {
       ],
     ),
   );
+}
+
+Widget messageWidget(
+    MessageObject messageData,
+    BuildContext context,
+    ScrollController _scrollController,
+    String selfToken,
+    String friendProfileImageUrl) {
+  if (_scrollController.hasClients) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    });
+  }
+  return messageData.token == selfToken
+      ? Padding(
+          padding: const EdgeInsets.only(bottom: 5.0),
+          child: Row(
+            children: [
+              Expanded(child: Container()),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 100,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      messageData.message,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Color(0xFF907fA4),
+                    ),
+                  ),
+                ),
+              ),
+              profileImageWidget(),
+            ],
+          ),
+        )
+      : Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            children: [
+              GestureDetector(
+                child: profileImageWidget(
+                  profileImageUrl: friendProfileImageUrl,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(
+                        userToken: messageData.token,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 100,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      messageData.message,
+                      style: TextStyle(
+                        color: Color(0xFF907fA4),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
 }

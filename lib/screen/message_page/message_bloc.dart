@@ -18,8 +18,12 @@ class MessageBloc {
   StreamSink<List<MessageObject>> get messageListSink =>
       _messageListController.sink;
 
-  MessageBloc(String selfToken, String friendToken) {
-    settingOrCreatingDocument(selfToken, friendToken);
+  MessageBloc(String selfToken, String friendToken, {bool globalChat = false}) {
+    if (globalChat) {
+      getGlobalMessageData();
+    } else {
+      settingOrCreatingDocument(selfToken, friendToken);
+    }
   }
 
   getMessageDataFromFireStore() {
@@ -33,11 +37,24 @@ class MessageBloc {
     });
   }
 
+  getGlobalMessageData() {
+    firebaseFirestore.collection("global_chat").snapshots().listen((event) {
+      messageListSink.add(_messageObject.fromArrayObject(event.docs));
+    });
+  }
+
   Future<void> sendMessageDataToFireStore(MessageObject messageObject) async {
     await firebaseFirestore
         .collection("message")
         .doc(dataRefKey)
         .collection("timestamp")
+        .doc(messageObject.timestamp.toString())
+        .set(messageObject.toMap());
+  }
+
+    Future<void> sendGlobalMessageDataToFireStore(MessageObject messageObject) async {
+    await firebaseFirestore
+        .collection("global_chat")
         .doc(messageObject.timestamp.toString())
         .set(messageObject.toMap());
   }
@@ -56,5 +73,4 @@ class MessageBloc {
   dispose() {
     _messageListController.close();
   }
-
 }

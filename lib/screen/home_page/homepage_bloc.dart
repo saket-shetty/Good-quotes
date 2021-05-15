@@ -64,8 +64,8 @@ class HomepageBloc {
     firebaseFirestore
         .collection("post")
         .where("post_saved", arrayContains: token)
-        .get()
-        .then((value) {
+        .snapshots()
+        .listen((value) {
       postListSavedSink.add(postData.forArrayToObject(value.docs));
     });
   }

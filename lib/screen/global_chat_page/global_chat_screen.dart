@@ -2,36 +2,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
+import 'package:motivational_quotes/constants/shared_preferences_key.dart';
+import 'package:motivational_quotes/main.dart';
 import 'package:motivational_quotes/screen/message_page/message_bloc.dart';
 import 'package:motivational_quotes/screen/message_page/message_object.dart';
-import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
 
-class MessageScreen extends StatefulWidget {
-  final String selfToken;
-  final ProfileObject friendProfile;
-  const MessageScreen(
-      {Key key, @required this.selfToken, @required this.friendProfile})
-      : super(key: key);
+class GlobalChatScreen extends StatefulWidget {
+  final String token;
+  const GlobalChatScreen({Key key, @required this.token}) : super(key: key);
   @override
-  _MessageScreenState createState() => _MessageScreenState();
+  _GlobalChatScreenState createState() => _GlobalChatScreenState();
 }
 
-class _MessageScreenState extends State<MessageScreen> {
-  MessageBloc _bloc;
+class _GlobalChatScreenState extends State<GlobalChatScreen> {
   TextEditingController _messageFieldController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  String image = sharedPreferences.getString(SharedPreferencesKey.image);
+
+  MessageBloc _bloc;
 
   @override
   void initState() {
     super.initState();
-    _bloc = MessageBloc(widget.selfToken, widget.friendProfile.token);
+    _bloc = MessageBloc(widget.token, null, globalChat: true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: commonAppBar("Global Chat"),
       backgroundColor: Color(0xFFfaf3f3),
-      appBar: commonAppBar(widget.friendProfile.name),
       body: Column(
         children: [
           Expanded(
@@ -46,7 +46,12 @@ class _MessageScreenState extends State<MessageScreen> {
                       controller: _scrollController,
                       itemBuilder: (_, index) {
                         MessageObject messageData = list[index];
-                        return messageWidget(messageData, context, _scrollController, widget.selfToken, widget.friendProfile.imageUrl);
+                        return messageWidget(
+                            messageData,
+                            context,
+                            _scrollController,
+                            widget.token,
+                            messageData.imageUrl);
                       },
                       itemCount: list.length,
                     );
@@ -86,11 +91,12 @@ class _MessageScreenState extends State<MessageScreen> {
             suffixIcon: IconButton(
               icon: Icon(Icons.send),
               onPressed: () async {
-                await _bloc.sendMessageDataToFireStore(
+                await _bloc.sendGlobalMessageDataToFireStore(
                   MessageObject(
                     _messageFieldController.text,
                     Timestamp.now().millisecondsSinceEpoch,
-                    widget.selfToken,
+                    widget.token,
+                    imageUrl: image,
                   ),
                 );
                 _messageFieldController.clear();
