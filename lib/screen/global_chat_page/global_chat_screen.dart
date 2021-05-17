@@ -30,7 +30,7 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: commonAppBar("Global Chat"),
+      // appBar: commonAppBar("Global Chat"),
       backgroundColor: Color(0xFFfaf3f3),
       body: Column(
         children: [

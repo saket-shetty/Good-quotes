@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
+import 'package:motivational_quotes/constants/shared_preferences_key.dart';
+import 'package:motivational_quotes/main.dart';
 import 'package:motivational_quotes/screen/message_page/message_bloc.dart';
 import 'package:motivational_quotes/screen/message_page/message_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
@@ -20,6 +22,7 @@ class _MessageScreenState extends State<MessageScreen> {
   MessageBloc _bloc;
   TextEditingController _messageFieldController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  String selfImage = sharedPreferences.getString(SharedPreferencesKey.image);
 
   @override
   void initState() {
@@ -46,7 +49,12 @@ class _MessageScreenState extends State<MessageScreen> {
                       controller: _scrollController,
                       itemBuilder: (_, index) {
                         MessageObject messageData = list[index];
-                        return messageWidget(messageData, context, _scrollController, widget.selfToken, widget.friendProfile.imageUrl);
+                        return messageWidget(
+                            messageData,
+                            context,
+                            _scrollController,
+                            widget.selfToken,
+                            widget.friendProfile.imageUrl);
                       },
                       itemCount: list.length,
                     );
@@ -91,6 +99,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     _messageFieldController.text,
                     Timestamp.now().millisecondsSinceEpoch,
                     widget.selfToken,
+                    imageUrl: selfImage,
                   ),
                 );
                 _messageFieldController.clear();

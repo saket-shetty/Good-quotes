@@ -1,12 +1,10 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/constants/shared_preferences_key.dart';
 import 'package:motivational_quotes/main.dart';
-import 'package:motivational_quotes/screen/comment_page/comment_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage_bloc.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
@@ -26,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _bloc = HomepageBloc();
+    _bloc = HomepageBloc(userToken);
   }
 
   @override
@@ -67,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             textPost(list[index], context),
-                            iconButtons(list[index]),
+                            iconButtons(list[index], userToken, _bloc, context),
                             socialDataMetrics(list[index], context),
                           ],
                         ),
@@ -262,52 +260,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         )
-      ],
-    );
-  }
-
-  Widget iconButtons(PostData data) {
-    bool isLiked = data.likes != null && data.likes.contains(userToken);
-    bool isSaved = data.postSavedByUsers != null &&
-        data.postSavedByUsers.contains(userToken);
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(
-            isLiked ? LineIcons.heartAlt : LineIcons.heart,
-            size: 30,
-            color: isLiked ? Colors.red : Colors.black,
-          ),
-          onPressed: () {
-            _bloc.likePost(data.timestamp, userToken, isLiked);
-          },
-        ),
-        IconButton(
-          icon: Icon(
-            LineIcons.alternateComment,
-            size: 30,
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CommentScreen(timestamp: data.timestamp),
-              ),
-            );
-          },
-        ),
-        Expanded(
-          child: Container(),
-        ),
-        IconButton(
-          icon: Icon(
-            isSaved ? Icons.bookmark : LineIcons.bookmarkAlt,
-            size: 30,
-          ),
-          onPressed: () {
-            _bloc.savePost(data.timestamp, userToken, isSaved);
-          },
-        ),
       ],
     );
   }

@@ -50,9 +50,15 @@ class MessageBloc {
         .collection("timestamp")
         .doc(messageObject.timestamp.toString())
         .set(messageObject.toMap());
+
+    await firebaseFirestore
+        .collection("message")
+        .doc(dataRefKey)
+        .set(messageObject.toMap());
   }
 
-    Future<void> sendGlobalMessageDataToFireStore(MessageObject messageObject) async {
+  Future<void> sendGlobalMessageDataToFireStore(
+      MessageObject messageObject) async {
     await firebaseFirestore
         .collection("global_chat")
         .doc(messageObject.timestamp.toString())

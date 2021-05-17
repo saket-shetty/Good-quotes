@@ -24,7 +24,7 @@ class ProfileBloc {
   StreamSink<ProfileObject> get profileDataSink =>
       _profileObjectController.sink;
 
-  ProfileBloc(String token) {
+  ProfileBloc(String token, {bool getAllPostData = true}) {
     getProfileDetailFromFirestore(token);
     getUserPostData(token);
   }

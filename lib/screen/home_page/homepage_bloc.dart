@@ -21,17 +21,51 @@ class HomepageBloc {
   Stream<List<PostData>> get postListSavedStream => postListController.stream;
   StreamSink<List<PostData>> get postListSavedSink => postListController.sink;
 
+  StreamController<List<PostData>> explorePostListController =
+      BehaviorSubject<List<PostData>>();
+
+  Stream<List<PostData>> get explorePostListStream => postListController.stream;
+  StreamSink<List<PostData>> get explorePostListSink => postListController.sink;
+
   HomepageBloc.savedPost(String token) {
     getSavedPostData(token);
   }
 
-  HomepageBloc() {
-    getDataFromFireStore();
+  HomepageBloc(String token, {bool isExplorePage = false}) {
+    if (!isExplorePage) {
+      getDataFromFireStore(token);
+    } else {
+      getPostDataForExplorePage();
+    }
   }
 
-  getDataFromFireStore() async {
+  getDataFromFireStore(String _token) async {
+    firebaseFirestore
+        .collection("user")
+        .doc(_token)
+        .snapshots()
+        .listen((value) {
+      List<String> following = [_token];
+      ProfileObject _profileData = ProfileObject.zero();
+      following.addAll(_profileData.fromMapObject(value.data()).followingKeys);
+      if (following.length > 0) {
+        firebaseFirestore.collection("post").snapshots().listen((event) {
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> listQuerySnapshot =
+              [];
+          for (var q in event.docs) {
+            if (following.contains(q.data()["posters_id"])) {
+              listQuerySnapshot.add(q);
+            }
+          }
+          postListSink.add(postData.forArrayToObject(listQuerySnapshot));
+        });
+      }
+    });
+  }
+
+  getPostDataForExplorePage() {
     firebaseFirestore.collection("post").snapshots().listen((event) {
-      postListSink.add(postData.forArrayToObject(event.docs));
+      explorePostListSink.add(postData.forArrayToObject(event.docs));
     });
   }
 
@@ -73,5 +107,6 @@ class HomepageBloc {
   dispose() {
     postListController.close();
     postListSavedController.close();
+    explorePostListController.close();
   }
 }

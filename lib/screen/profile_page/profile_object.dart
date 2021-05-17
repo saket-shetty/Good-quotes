@@ -8,6 +8,7 @@ class ProfileObject {
   String status;
   List<ProfileObject> follower;
   List<ProfileObject> following;
+  List<String> followingKeys;
 
   ProfileObject.zero();
 
@@ -19,6 +20,7 @@ class ProfileObject {
     this.status,
     this.follower,
     this.following,
+    this.followingKeys,
   );
 
   Map<String, dynamic> toMapLimitedData() {
@@ -48,6 +50,7 @@ class ProfileObject {
       map["status"],
       fromMapLimitedDataObject(map["follower"]),
       fromMapLimitedDataObject(map["following"]),
+      getFollowingKeys(map["following"]),
     );
   }
 
@@ -61,10 +64,18 @@ class ProfileObject {
     return profileList;
   }
 
+  List<String> getFollowingKeys(List<dynamic> list) {
+    if (list == null) return [];
+    List<String> keyList = [];
+    for (var follow in list) {
+      keyList.add(follow["token"]);
+    }
+    return keyList;
+  }
+
   List<ProfileObject> fromArrayObject(
       List<QueryDocumentSnapshot<Map<String, dynamic>>> data,
       {String name}) {
-    print(data);
     List<ProfileObject> list = [];
     for (var object in data) {
       if (name != null) {

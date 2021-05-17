@@ -341,7 +341,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget userConnectionButton(ProfileObject _profileObject) {
-    ProfileObject _self = ProfileObject(name, token, image, null, null, [], []);
+    ProfileObject _self =
+        ProfileObject(name, token, image, null, null, [], [], []);
     bool isUserFollowing = false;
     if (_profileObject.follower != null) {
       for (ProfileObject obj in _profileObject.follower) {

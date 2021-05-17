@@ -41,12 +41,12 @@ class SignInGoogle {
     var doc = await userDocRef.get();
     if (!doc.exists) {
       await userDocRef.set(
-        ProfileObject(name, token, imageUrl, 0, null, [], [])
+        ProfileObject(name, token, imageUrl, 0, null, [], [], [])
             .toMapLimitedData(),
       );
     } else {
       await userDocRef.update(
-        ProfileObject(name, token, imageUrl, 0, null, [], [])
+        ProfileObject(name, token, imageUrl, 0, null, [], [], [])
             .toMapLimitedData(),
       );
     }

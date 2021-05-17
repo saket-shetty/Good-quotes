@@ -3,13 +3,15 @@ import 'package:line_icons/line_icons.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/screen/add_post/add_post_screen.dart';
 import 'package:motivational_quotes/screen/comment_page/comment_screen.dart';
-import 'package:motivational_quotes/screen/global_chat_page/global_chat_screen.dart';
+import 'package:motivational_quotes/screen/explore_page/explore_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage.dart';
+import 'package:motivational_quotes/screen/home_page/homepage_bloc.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
+import 'package:motivational_quotes/screen/message_page/chat_tab_screen.dart';
 import 'package:motivational_quotes/screen/message_page/message_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
 
-PreferredSizeWidget commonAppBar(String title) {
+PreferredSizeWidget commonAppBar(String title, {PreferredSizeWidget tabs}) {
   return AppBar(
     title: Text(
       "$title",
@@ -20,6 +22,7 @@ PreferredSizeWidget commonAppBar(String title) {
     ),
     centerTitle: true,
     backgroundColor: Color(0xFF907fA4),
+    bottom: tabs,
   );
 }
 
@@ -52,16 +55,14 @@ Widget bottomNavigationBar(BuildContext context, int tab, String token,
         ),
         IconButton(
           icon: Icon(
-            LineIcons.facebookMessenger,
+            LineIcons.compass,
             size: 30,
           ),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => GlobalChatScreen(
-                  token: token,
-                ),
+                builder: (context) => ExploreScreen(),
               ),
             );
           },
@@ -76,6 +77,22 @@ Widget bottomNavigationBar(BuildContext context, int tab, String token,
               context,
               MaterialPageRoute(
                 builder: (context) => AddPostScreen(),
+              ),
+            );
+          },
+        ),
+        IconButton(
+          icon: Icon(
+            LineIcons.facebookMessenger,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatTabScreen(
+                  token: token,
+                ),
               ),
             );
           },
@@ -289,4 +306,51 @@ Widget messageWidget(
             ],
           ),
         );
+}
+
+Widget iconButtons(
+    PostData data, String userToken, HomepageBloc _bloc, BuildContext context) {
+  bool isLiked = data.likes != null && data.likes.contains(userToken);
+  bool isSaved = data.postSavedByUsers != null &&
+      data.postSavedByUsers.contains(userToken);
+  return Row(
+    children: [
+      IconButton(
+        icon: Icon(
+          isLiked ? LineIcons.heartAlt : LineIcons.heart,
+          size: 30,
+          color: isLiked ? Colors.red : Colors.black,
+        ),
+        onPressed: () {
+          _bloc.likePost(data.timestamp, userToken, isLiked);
+        },
+      ),
+      IconButton(
+        icon: Icon(
+          LineIcons.alternateComment,
+          size: 30,
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CommentScreen(timestamp: data.timestamp),
+            ),
+          );
+        },
+      ),
+      Expanded(
+        child: Container(),
+      ),
+      IconButton(
+        icon: Icon(
+          isSaved ? Icons.bookmark : LineIcons.bookmarkAlt,
+          size: 30,
+        ),
+        onPressed: () {
+          _bloc.savePost(data.timestamp, userToken, isSaved);
+        },
+      ),
+    ],
+  );
 }
