@@ -223,15 +223,6 @@ Widget messageWidget(
     ScrollController _scrollController,
     String selfToken,
     String friendProfileImageUrl) {
-  if (_scrollController.hasClients) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
-      );
-    });
-  }
   return messageData.token == selfToken
       ? Padding(
           padding: const EdgeInsets.only(bottom: 5.0),

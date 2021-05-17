@@ -34,6 +34,15 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 100),
+        );
+      });
+    });
     return Scaffold(
       backgroundColor: Color(0xFFfaf3f3),
       appBar: commonAppBar(widget.friendProfile.name),

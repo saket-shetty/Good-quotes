@@ -31,6 +31,15 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 100),
+        );
+      });
+    });
     return Scaffold(
       // appBar: commonAppBar("Global Chat"),
       backgroundColor: Color(0xFFfaf3f3),
