@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
@@ -83,12 +85,15 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
           textAlignVertical: TextAlignVertical.center,
           maxLines: null,
           onTap: () {
-            if (_scrollController.hasClients) {
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                _scrollController
-                    .jumpTo(_scrollController.position.maxScrollExtent);
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              Future.delayed(Duration(milliseconds: 100), () {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 100),
+                );
               });
-            }
+            });
           },
           decoration: InputDecoration(
             hintText: "Add a comment...",
