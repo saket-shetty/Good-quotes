@@ -82,6 +82,14 @@ class _GlobalChatScreenState extends State<GlobalChatScreen> {
           controller: _messageFieldController,
           textAlignVertical: TextAlignVertical.center,
           maxLines: null,
+          onTap: () {
+            if (_scrollController.hasClients) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                _scrollController
+                    .jumpTo(_scrollController.position.maxScrollExtent);
+              });
+            }
+          },
           decoration: InputDecoration(
             hintText: "Add a comment...",
             prefixIcon: Padding(
