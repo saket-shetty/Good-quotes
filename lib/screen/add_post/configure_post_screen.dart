@@ -18,8 +18,8 @@ class ConfigurePostScreen extends StatefulWidget {
 class _ConfigurePostScreenState extends State<ConfigurePostScreen> {
   List data = [
     0xFFFFFFFF,
-    0xFFfaf2da,
-    0xFF9fe6a0,
+    0xFFE69A8D,
+    0xFF5F4B8B,
     0xFFffb26b,
     0xFFfffbdf,
     0xFFe7d4b5,

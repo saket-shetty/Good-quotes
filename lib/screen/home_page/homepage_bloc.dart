@@ -31,8 +31,10 @@ class HomepageBloc {
     getSavedPostData(token);
   }
 
-  HomepageBloc(String token, {bool isExplorePage = false}) {
-    if (!isExplorePage) {
+  HomepageBloc(String token,
+      {bool isExplorePage = false, bool isPostDetailPage = false}) {
+    if (isPostDetailPage) {
+    } else if (!isExplorePage) {
       getDataFromFireStore(token);
     } else {
       getPostDataForExplorePage();

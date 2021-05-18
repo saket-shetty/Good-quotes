@@ -7,6 +7,7 @@ import 'package:motivational_quotes/screen/diary_page/diary_screen.dart';
 import 'package:motivational_quotes/screen/follower_following_page/follower_following_screen.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/message_page/message_screen.dart';
+import 'package:motivational_quotes/screen/post_detail_page/post_detail_screen.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_bloc.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
 import 'package:motivational_quotes/screen/saved_post/saved_post_screen.dart';
@@ -203,9 +204,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                         ),
-                        itemBuilder: (_, index) => textPost(
-                            list[index], context,
-                            hideHeader: true, dynamicWidth: true),
+                        itemBuilder: (_, index) => GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PostDetailScreen(
+                                        token: token,
+                                        timestamp:
+                                            list[index].timestamp.toString())));
+                          },
+                          child: textPost(
+                            list[index],
+                            context,
+                            hideHeader: true,
+                            dynamicWidth: true,
+                          ),
+                        ),
                         itemCount: list.length,
                       ),
                     );
