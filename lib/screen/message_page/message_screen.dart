@@ -25,6 +25,7 @@ class _MessageScreenState extends State<MessageScreen> {
   TextEditingController _messageFieldController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   String selfImage = sharedPreferences.getString(SharedPreferencesKey.image);
+  bool _emptyField = true;
 
   @override
   void initState() {
@@ -107,6 +108,11 @@ class _MessageScreenState extends State<MessageScreen> {
               });
             });
           },
+          onChanged: (value) {
+            setState(() {
+              _emptyField = value.replaceAll(RegExp(r'\s'), "").length == 0;
+            });
+          },
           decoration: InputDecoration(
             hintText: "Add a comment...",
             prefixIcon: Padding(
@@ -114,17 +120,22 @@ class _MessageScreenState extends State<MessageScreen> {
               child: profileImageWidget(),
             ),
             suffixIcon: IconButton(
-              icon: Icon(Icons.send),
+              icon: Icon(
+                Icons.send,
+                color: _emptyField ? Colors.grey : Color(0xFF907fA4),
+              ),
               onPressed: () async {
-                await _bloc.sendMessageDataToFireStore(
-                  MessageObject(
-                    _messageFieldController.text,
-                    Timestamp.now().millisecondsSinceEpoch,
-                    widget.selfToken,
-                    imageUrl: selfImage,
-                  ),
-                );
-                _messageFieldController.clear();
+                if (!_emptyField) {
+                  await _bloc.sendMessageDataToFireStore(
+                    MessageObject(
+                      _messageFieldController.text,
+                      Timestamp.now().millisecondsSinceEpoch,
+                      widget.selfToken,
+                      imageUrl: selfImage,
+                    ),
+                  );
+                  _messageFieldController.clear();
+                }
               },
             ),
           ),
