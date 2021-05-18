@@ -3,11 +3,11 @@ import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/constants/shared_preferences_key.dart';
 import 'package:motivational_quotes/main.dart';
-import 'package:motivational_quotes/screen/diary_page/diary_screen.dart';
 import 'package:motivational_quotes/screen/follower_following_page/follower_following_screen.dart';
 import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/message_page/message_screen.dart';
 import 'package:motivational_quotes/screen/post_detail_page/post_detail_screen.dart';
+import 'package:motivational_quotes/screen/profile_page/edit_profile/edit_profile_screen.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_bloc.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
 import 'package:motivational_quotes/screen/saved_post/saved_post_screen.dart';
@@ -26,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String image = sharedPreferences.getString(SharedPreferencesKey.image);
   bool get selfProfile => widget.userToken == token;
   ProfileBloc _bloc;
+  ProfileObject _profileObject;
 
   @override
   void initState() {
@@ -46,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 stream: _bloc.profileDataStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data != null) {
-                    ProfileObject _profileObject = snapshot.data;
+                    _profileObject = snapshot.data;
                     return ListView(
                       shrinkWrap: true,
                       children: [
@@ -295,24 +296,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  child: Text("Diary"),
-                  onTap: () async {
-                    print("Diary clicked");
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DiaryScreen(
-                          token: token,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Divider(
-                  thickness: 1,
-                ),
+                // GestureDetector(
+                //   child: Text("Diary"),
+                //   onTap: () async {
+                //     print("Diary clicked");
+                //     Navigator.pop(context);
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => DiaryScreen(
+                //           token: token,
+                //         ),
+                //       ),
+                //     );
+                //   },
+                // ),
+                // Divider(
+                //   thickness: 1,
+                // ),
                 GestureDetector(
                   child: Text("Saved Post"),
                   onTap: () {
@@ -334,6 +335,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     print("Edit Profile clicked");
                     Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                EditProfileScreen(bio: _profileObject.status, token: token,)));
                   },
                 ),
                 Divider(

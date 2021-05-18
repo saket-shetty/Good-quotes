@@ -44,11 +44,6 @@ class SignInGoogle {
         ProfileObject(name, token, imageUrl, 0, null, [], [], [])
             .toMapLimitedData(),
       );
-    } else {
-      await userDocRef.update(
-        ProfileObject(name, token, imageUrl, 0, null, [], [], [])
-            .toMapLimitedData(),
-      );
     }
   }
 
@@ -59,7 +54,7 @@ class SignInGoogle {
   Future<void> handleLogout(BuildContext context) async {
     await handleGoogleSignOut();
     await sharedPreferences.clear();
-        Navigator.push(
+    Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 }
