@@ -53,11 +53,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: IconConstants.socialIconSize,
                       ),
                     ),
-                    Image.asset(
-                      "assets/facebook.png",
-                      width: IconConstants.socialIconSize,
-                      height: IconConstants.socialIconSize,
-                    ),
+                    // Image.asset(
+                    //   "assets/facebook.png",
+                    //   width: IconConstants.socialIconSize,
+                    //   height: IconConstants.socialIconSize,
+                    // ),
                   ],
                 ),
               ),

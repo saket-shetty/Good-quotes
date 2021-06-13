@@ -42,8 +42,16 @@ dependencies:
   expandable: ^5.0.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.9.0
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/ic_launcher.png"
+  adaptive_icon_background: "#ff7c4dff"
+  adaptive_icon_foreground: "assets/ic_launcher.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
