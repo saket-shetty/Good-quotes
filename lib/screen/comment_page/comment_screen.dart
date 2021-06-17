@@ -3,6 +3,7 @@ import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
 import 'package:motivational_quotes/screen/comment_page/comment_bloc.dart';
 import 'package:motivational_quotes/screen/comment_page/comment_data_object.dart';
+import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
 
 class CommentScreen extends StatefulWidget {
   final int timestamp;
@@ -56,8 +57,18 @@ class _CommentScreenState extends State<CommentScreen> {
               shrinkWrap: true,
               itemBuilder: (_, index) {
                 return ListTile(
-                  leading:
-                      profileImageWidget(profileImageUrl: list[index].imageUrl),
+                  leading: GestureDetector(
+                    child: profileImageWidget(
+                        profileImageUrl: list[index].imageUrl),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileScreen(userToken: list[index].token),
+                        ),
+                      );
+                    },
+                  ),
                   title: Text(list[index].name),
                   subtitle: Text(list[index].comment),
                 );
