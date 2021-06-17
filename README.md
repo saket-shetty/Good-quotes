@@ -1,6 +1,8 @@
 <center><h3>Good Quotes</h3></center>
 
-- [Android](https://github.com/saket-shetty/Good-quotes/raw/master/build/app/outputs/apk/release/app-release.apk)
+- [Play Store](https://play.google.com/store/apps/details?id=com.goodquotes.motivational_quotes&pli=1)
+
+- [Latest Android Build](https://github.com/saket-shetty/Good-quotes/raw/master/build/app/outputs/apk/release/app-release.apk)
 
 <table>
   <tr>
