@@ -26,8 +26,11 @@ class SignInGoogle {
           SharedPreferencesKey.name, googleuser.displayName);
       await sharedPreferences.setString(
           SharedPreferencesKey.image, googleuser.photoURL);
-      await storeProfileDataInFirestore(
-          googleuser.uid, googleuser.displayName, googleuser.photoURL);
+      String fcmToken = await getFCMToken();
+      await sharedPreferences.setString(
+          SharedPreferencesKey.fcmToken, fcmToken);
+      await storeProfileDataInFirestore(googleuser.uid, googleuser.displayName,
+          googleuser.photoURL, fcmToken);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     } catch (error) {
@@ -36,14 +39,21 @@ class SignInGoogle {
   }
 
   Future<void> storeProfileDataInFirestore(
-      String token, String name, String imageUrl) async {
+      String token, String name, String imageUrl, String fcmToken) async {
     var userDocRef = firebaseFirestore.collection("user").doc(token);
     var doc = await userDocRef.get();
     if (!doc.exists) {
       await userDocRef.set(
-        ProfileObject(name, token, imageUrl, 0, null, [], [], [])
+        ProfileObject(name, token, imageUrl, 0, null, [], [], [], fcmToken)
             .toMapLimitedData(),
       );
+    } else {
+      await userDocRef.update({
+        "name": name,
+        "token": token,
+        "image_url": imageUrl,
+        "fcmToken": fcmToken
+      });
     }
   }
 

@@ -9,7 +9,6 @@ import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
 import 'package:motivational_quotes/screen/splash_screen.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 StreamController<List<ProfileObject>> userSearchDetailController =
@@ -22,15 +21,21 @@ void main() async {
   await Firebase.initializeApp();
   firebaseFirestore = FirebaseFirestore.instance;
   sharedPreferences = await SharedPreferences.getInstance();
-  FirebaseFunctions functions = FirebaseFunctions.instance;
-  getFCMToken();
   notificationHandler();
   runApp(MyApp());
 }
 
-void getFCMToken() async {
+Future<String> getFCMToken() async {
   String fcmToken = await FirebaseMessaging.instance.getToken();
-  sharedPreferences.setString(SharedPreferencesKey.fcmToken, fcmToken);
+  FirebaseMessaging.instance.onTokenRefresh.listen((snapshot) {
+    print("Token has been refershed");
+    String token = sharedPreferences.getString(SharedPreferencesKey.token);
+    firebaseFirestore
+        .collection("user")
+        .doc(token)
+        .update({"fcm_token": snapshot});
+  });
+  return fcmToken;
 }
 
 void notificationHandler() {

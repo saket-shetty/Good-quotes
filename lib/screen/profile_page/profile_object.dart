@@ -9,6 +9,7 @@ class ProfileObject {
   List<ProfileObject> follower;
   List<ProfileObject> following;
   List<String> followingKeys;
+  String fcmToken;
 
   ProfileObject.zero();
 
@@ -21,6 +22,7 @@ class ProfileObject {
     this.follower,
     this.following,
     this.followingKeys,
+    this.fcmToken,
   );
 
   Map<String, dynamic> toMapLimitedData() {
@@ -28,6 +30,7 @@ class ProfileObject {
       "user_name": this.name,
       "token": this.token,
       "image_url": this.imageUrl,
+      "fcmToken": this.fcmToken,
     };
   }
 
@@ -38,6 +41,7 @@ class ProfileObject {
       "image_url": this.imageUrl,
       "posts_count": this.postCounts,
       "status": this.status,
+      "fcmToken": this.fcmToken,
     };
   }
 
@@ -51,6 +55,7 @@ class ProfileObject {
       fromMapLimitedDataObject(map["follower"]),
       fromMapLimitedDataObject(map["following"]),
       getFollowingKeys(map["following"]),
+      map["fcm_token"]
     );
   }
 

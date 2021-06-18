@@ -25,6 +25,7 @@ class _MessageScreenState extends State<MessageScreen> {
   TextEditingController _messageFieldController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   String selfImage = sharedPreferences.getString(SharedPreferencesKey.image);
+  String selfName = sharedPreferences.getString(SharedPreferencesKey.name);
   bool _emptyField = true;
 
   @override
@@ -132,6 +133,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       Timestamp.now().millisecondsSinceEpoch,
                       widget.selfToken,
                       imageUrl: selfImage,
+                      name: selfName,
                     ),
                   );
                   _messageFieldController.clear();

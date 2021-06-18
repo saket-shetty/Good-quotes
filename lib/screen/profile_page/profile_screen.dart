@@ -338,8 +338,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                EditProfileScreen(bio: _profileObject.status, token: token,)));
+                            builder: (context) => EditProfileScreen(
+                                  bio: _profileObject.status,
+                                  token: token,
+                                )));
                   },
                 ),
                 Divider(
@@ -361,9 +363,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  //Follow or UnFollow function
   Widget userConnectionButton(ProfileObject _profileObject) {
     ProfileObject _self =
-        ProfileObject(name, token, image, null, null, [], [], []);
+        ProfileObject(name, token, image, null, null, [], [], [], null);
     bool isUserFollowing = false;
     if (_profileObject.follower != null) {
       for (ProfileObject obj in _profileObject.follower) {

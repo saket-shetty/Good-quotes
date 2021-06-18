@@ -5,10 +5,11 @@ class MessageObject {
   int timestamp;
   String token;
   String imageUrl;
+  String name;
 
   MessageObject.zero();
 
-  MessageObject(this.message, this.timestamp, this.token, {this.imageUrl});
+  MessageObject(this.message, this.timestamp, this.token, {this.imageUrl, this.name});
 
   Map<String, dynamic> toMap() {
     return {
@@ -16,6 +17,7 @@ class MessageObject {
       "timestamp": this.timestamp,
       "token": this.token,
       "image": this.imageUrl,
+      "name": this.name,
     };
   }
 
