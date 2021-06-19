@@ -7,7 +7,10 @@ import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
 
 class CommentScreen extends StatefulWidget {
   final int timestamp;
-  const CommentScreen({Key key, @required this.timestamp}) : super(key: key);
+  final String postToken;
+  const CommentScreen(
+      {Key key, @required this.timestamp, @required this.postToken})
+      : super(key: key);
   @override
   _CommentScreenState createState() => _CommentScreenState();
 }
@@ -104,8 +107,8 @@ class _CommentScreenState extends State<CommentScreen> {
             suffixIcon: IconButton(
               icon: Icon(Icons.send),
               onPressed: () async {
-                await _bloc.postCommentInFireStore(
-                    _commentFieldController.text, widget.timestamp);
+                await _bloc.postCommentInFireStore(_commentFieldController.text,
+                    widget.timestamp, widget.postToken);
                 _commentFieldController.clear();
               },
             ),

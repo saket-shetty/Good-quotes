@@ -82,7 +82,7 @@ class _SavedPostScreenState extends State<SavedPostScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CommentScreen(timestamp: data.timestamp),
+                builder: (context) => CommentScreen(timestamp: data.timestamp, postToken: data.postersId),
               ),
             );
           },

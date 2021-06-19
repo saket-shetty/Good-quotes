@@ -32,7 +32,7 @@ class CommentBloc {
     });
   }
 
-  Future<void> postCommentInFireStore(String comment, int postTimestamp) async {
+  Future<void> postCommentInFireStore(String comment, int postTimestamp, String postToken) async {
     String name = sharedPreferences.getString(SharedPreferencesKey.name);
     String image = sharedPreferences.getString(SharedPreferencesKey.image);
     String token = sharedPreferences.getString(SharedPreferencesKey.token);
@@ -42,7 +42,7 @@ class CommentBloc {
         .doc(postTimestamp.toString())
         .collection("comments")
         .doc(timestamp.toString())
-        .set(CommentDataObject(name, comment, image, token).toMap());
+        .set(CommentDataObject(name, comment, image, token, postToken).toMap());
 
     firebaseFirestore.collection("post").doc(postTimestamp.toString()).update({
       "comments_count": FieldValue.increment(1),

@@ -195,8 +195,8 @@ Widget socialDataMetrics(PostData data, BuildContext context) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        CommentScreen(timestamp: data.timestamp),
+                    builder: (context) => CommentScreen(
+                        timestamp: data.timestamp, postToken: data.postersId),
                   ),
                 );
               },
@@ -325,7 +325,8 @@ Widget iconButtons(
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CommentScreen(timestamp: data.timestamp),
+              builder: (context) => CommentScreen(
+                  timestamp: data.timestamp, postToken: data.postersId),
             ),
           );
         },

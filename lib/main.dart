@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:motivational_quotes/constants/shared_preferences_key.dart';
 import 'package:motivational_quotes/login/login_screen.dart';
 import 'package:motivational_quotes/screen/home_page/homepage.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_object.dart';
@@ -22,18 +21,14 @@ void main() async {
   firebaseFirestore = FirebaseFirestore.instance;
   sharedPreferences = await SharedPreferences.getInstance();
   notificationHandler();
+  getFCMToken();
   runApp(MyApp());
 }
 
 Future<String> getFCMToken() async {
   String fcmToken = await FirebaseMessaging.instance.getToken();
-  FirebaseMessaging.instance.onTokenRefresh.listen((snapshot) {
-    print("Token has been refershed");
-    String token = sharedPreferences.getString(SharedPreferencesKey.token);
-    firebaseFirestore
-        .collection("user")
-        .doc(token)
-        .update({"fcm_token": snapshot});
+  firebaseFirestore.collection("allUserToken").doc("fcmToken").update({
+    "tokens": FieldValue.arrayUnion([fcmToken]),
   });
   return fcmToken;
 }

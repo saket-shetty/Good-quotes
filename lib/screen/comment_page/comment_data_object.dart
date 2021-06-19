@@ -5,9 +5,10 @@ class CommentDataObject {
   String comment;
   String imageUrl;
   String token;
+  String postToken;
 
   CommentDataObject.zero();
-  CommentDataObject(this.name, this.comment, this.imageUrl, this.token);
+  CommentDataObject(this.name, this.comment, this.imageUrl, this.token, this.postToken);
 
   CommentDataObject fromMap(Map<String, dynamic> map) {
     return CommentDataObject(
@@ -15,6 +16,7 @@ class CommentDataObject {
       map["comment"],
       map["image"],
       map["token"],
+      map["postToken"]
     );
   }
 
@@ -24,6 +26,7 @@ class CommentDataObject {
       "comment": this.comment,
       "image": this.imageUrl,
       "token": this.token,
+      "postToken": this.postToken,
     };
     return map;
   }
