@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/common_widgets/profile_image_widget.dart';
@@ -350,9 +351,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 GestureDetector(
                   child: Text("Logout"),
                   onTap: () async {
-                    print("Logout clicked");
-                    Navigator.pop(context);
-                    SignInGoogle().handleLogout(context);
+                    await FirebaseMessaging.instance.deleteToken();
+                    await SignInGoogle().handleLogout(context);
+                    // Navigator.pop(context);
                   },
                 ),
               ],

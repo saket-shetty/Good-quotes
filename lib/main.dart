@@ -30,6 +30,7 @@ Future<String> getFCMToken() async {
   firebaseFirestore.collection("allUserToken").doc("fcmToken").update({
     "tokens": FieldValue.arrayUnion([fcmToken]),
   });
+  print("FCM token $fcmToken");
   return fcmToken;
 }
 

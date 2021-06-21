@@ -154,11 +154,14 @@ Widget textPost(PostData postData, BuildContext context,
               ? (MediaQuery.of(context).size.width / 3) - 8
               : MediaQuery.of(context).size.width,
           color: Color(int.parse(postData.backgroundColor)),
+          padding: EdgeInsets.all(20),
           child: Center(
             child: Text(
               postData.quote,
               style: TextStyle(
-                fontSize: dynamicWidth ? 13 : postData.fontSize.toDouble(),
+                fontSize: dynamicWidth
+                    ? postData.fontSize.toDouble() / 3
+                    : postData.fontSize.toDouble(),
                 height: 1.6,
                 fontFamily: "PlayfairVariable",
                 color: Colors.black,

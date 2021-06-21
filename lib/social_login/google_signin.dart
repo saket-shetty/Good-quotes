@@ -20,6 +20,7 @@ class SignInGoogle {
         idToken: gSA.idToken,
       );
       User googleuser = (await _fAuth.signInWithCredential(credential)).user;
+      // searchMultipleDocument(googleuser.uid);
       await sharedPreferences.setString(
           SharedPreferencesKey.token, googleuser.uid);
       await sharedPreferences.setString(
