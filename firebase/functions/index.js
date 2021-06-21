@@ -2,6 +2,8 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 admin.initializeApp(functions.config().functions);
+const db = admin.firestore();
+
 exports.chatMessage = functions.firestore.document("message/{messageKey}/timestamp/{timestamp}").onCreate(async (snapshot, context)=>{
     if(!snapshot.exists){
         console.log("Data does not exist");
@@ -82,5 +84,47 @@ exports.newUserNotification = functions.firestore.document("user/{userId}").onCr
                 console.log("Error while sending notification :", e);
             }
         }
+    });
+});
+
+exports.userPostNotification = functions.firestore.document("post/{postId}").onCreate(async (snapshot, context)=>{
+    if(!snapshot.exists){
+        console.log("Data does not exist");
+        return;
+    }
+
+    var postData = snapshot.data();
+    var postersId = postData["posters_id"];
+
+    console.log("Posters id :", postersId);
+
+    var followerIdList = [];
+    var followerFCMTokenList = [];
+
+    const db = admin.firestore();
+    db.collection("user").doc(postersId).get().then(doc => {
+        var followersData = doc.data()["follower"];
+        for(let i=0; i<followersData.length; i++){
+            followerIdList.push(followersData[i]["token"]);
+        }
+        
+        db.collection("user").where(admin.firestore.FieldPath.documentId(), 'in', followerIdList).get().then( followersDetails => {
+            for(let i=0; i<followersDetails.docs.length; i++){
+                console.log("Each FCM token :", followersDetails.docs[i].data().fcmToken);
+                followerFCMTokenList.push(followersDetails.docs[i].data().fcmToken);
+            }
+            console.log("FCM token list :", followerFCMTokenList);
+
+            var payload = {
+                notification: {title: postData["posters_name"] + " posted a new post", body: postData["quote"], sound: "default"},
+                data: {click_action: "FLUTTER_NOTIFICATION_CLICK", message: "Sample Push Message"}
+            }
+            try{
+                console.log("Notification sent successfully to :", followerFCMTokenList);
+                admin.messaging().sendToDevice(followerFCMTokenList, payload);
+            }catch(e){
+                console.log("Error while sending notification :", e);
+            }
+        });
     });
 });
