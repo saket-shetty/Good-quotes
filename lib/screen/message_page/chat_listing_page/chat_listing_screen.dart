@@ -12,7 +12,8 @@ class ChatListingScreen extends StatefulWidget {
   _ChatListingScreenState createState() => _ChatListingScreenState();
 }
 
-class _ChatListingScreenState extends State<ChatListingScreen> {
+class _ChatListingScreenState extends State<ChatListingScreen>
+    with AutomaticKeepAliveClientMixin<ChatListingScreen> {
   ChatListingBloc _bloc;
   @override
   void initState() {
@@ -21,6 +22,7 @@ class _ChatListingScreenState extends State<ChatListingScreen> {
   }
 
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFfaf3f3),
@@ -61,4 +63,7 @@ class _ChatListingScreenState extends State<ChatListingScreen> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
