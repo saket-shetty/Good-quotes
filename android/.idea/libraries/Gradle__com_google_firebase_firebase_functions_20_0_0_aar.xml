@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.firebase:firebase-functions:20.0.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0da09089117cc4796bdb71ce43a72ab8/jetified-firebase-functions-20.0.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/32c35163697a353251c01bf55bfa7189/jetified-firebase-functions-20.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/32c35163697a353251c01bf55bfa7189/jetified-firebase-functions-20.0.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/32c35163697a353251c01bf55bfa7189/jetified-firebase-functions-20.0.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.firebase/firebase-functions/20.0.0/5ba862175ec9da37d9be280626cd135312a46e1/firebase-functions-20.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.firebase/firebase-functions/20.0.0/56de995c5c81d651a14855bf8c3bb016e94a0147/firebase-functions-20.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

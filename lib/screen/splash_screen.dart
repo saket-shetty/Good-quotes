@@ -6,6 +6,8 @@ import 'package:motivational_quotes/main.dart';
 import 'package:motivational_quotes/screen/home_page/homepage.dart';
 
 class SplashScreen extends StatefulWidget {
+  final Map<String, dynamic> data;
+  const SplashScreen({Key key, @required this.data}) : super(key: key);
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -18,14 +20,18 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     token = sharedPreferences.getString(SharedPreferencesKey.token);
     Future.delayed(Duration(seconds: 2), () {
-      if (token != null && token.isNotEmpty) {
-        //Navigate to home page;
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+      if (this.widget.data != null) {
+        notificationRoute(this.widget.data);
       } else {
-        //Navigate to login page;
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        if (token != null && token.isNotEmpty) {
+          //Navigate to home page;
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
+        } else {
+          //Navigate to login page;
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        }
       }
     });
   }
