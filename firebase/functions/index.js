@@ -20,7 +20,7 @@ exports.chatMessage = functions.firestore.document("message/{messageKey}/timesta
             var token = doc.data().fcmToken;
             var payload = {
                 notification: {title: messageData.name, body: messageData.message, sound: "default"},
-                data: {click_action: "FLUTTER_NOTIFICATION_CLICK", message: "Sample Push Message", 
+                data: {click_action: "FLUTTER_NOTIFICATION_CLICK", message: messageData.message, 
                 name: messageData.name, token: messageData.token, image: messageData.image, screen: "chat"}
             }
             try{
