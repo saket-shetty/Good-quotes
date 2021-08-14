@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:motivational_quotes/common_widgets/common_appbar_widget.dart';
 import 'package:motivational_quotes/constants/shared_preferences_key.dart';
 import 'package:motivational_quotes/login/login_screen.dart';
 import 'package:motivational_quotes/main.dart';
@@ -19,23 +20,25 @@ class SignInGoogle {
         accessToken: gSA.accessToken,
         idToken: gSA.idToken,
       );
+      showSnackbar("Welcome", "Please wait a minute.");
       User googleuser = (await _fAuth.signInWithCredential(credential)).user;
       // searchMultipleDocument(googleuser.uid);
-      await sharedPreferences.setString(
-          SharedPreferencesKey.token, googleuser.uid);
+      String fcmToken = await getFCMToken();
+      await storeProfileDataInFirestore(googleuser.uid, googleuser.displayName,
+          googleuser.photoURL, fcmToken);
       await sharedPreferences.setString(
           SharedPreferencesKey.name, googleuser.displayName);
       await sharedPreferences.setString(
           SharedPreferencesKey.image, googleuser.photoURL);
-      String fcmToken = await getFCMToken();
       await sharedPreferences.setString(
           SharedPreferencesKey.fcmToken, fcmToken);
-      await storeProfileDataInFirestore(googleuser.uid, googleuser.displayName,
-          googleuser.photoURL, fcmToken);
+      await sharedPreferences.setString(
+          SharedPreferencesKey.token, googleuser.uid);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     } catch (error) {
       print(error);
+      showSnackbar("Error", "Login failed: $error");
     }
   }
 

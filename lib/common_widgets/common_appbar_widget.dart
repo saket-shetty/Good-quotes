@@ -10,6 +10,7 @@ import 'package:motivational_quotes/screen/home_page/post_data_object.dart';
 import 'package:motivational_quotes/screen/message_page/chat_tab_screen.dart';
 import 'package:motivational_quotes/screen/message_page/message_object.dart';
 import 'package:motivational_quotes/screen/profile_page/profile_screen.dart';
+import 'package:get/get.dart';
 
 PreferredSizeWidget commonAppBar(String title, {PreferredSizeWidget tabs}) {
   return AppBar(
@@ -348,4 +349,8 @@ Widget iconButtons(
       ),
     ],
   );
+}
+
+void showSnackbar(String title, String message) {
+  Get.snackbar(title, message, backgroundColor: Colors.deepPurpleAccent);
 }
